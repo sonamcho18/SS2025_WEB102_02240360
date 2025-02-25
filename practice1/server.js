@@ -1,3 +1,5 @@
+// Part 2
+
 // Step 1: Import the required modules
 const express = require('express'); // Import Express framework
 const app = express(); // Create an Express application

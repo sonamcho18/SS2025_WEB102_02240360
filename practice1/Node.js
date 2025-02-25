@@ -1,3 +1,5 @@
+// Part 1
+
 // Import the built-in HTTP module to create a server
 const http = require("http");
 
@@ -31,4 +33,4 @@ server.listen(3000, () => {
     console.log("Server running on http://localhost:3000");
 });
 
-// Part 2
+
