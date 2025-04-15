@@ -1,26 +1,20 @@
 const express = require('express');
-const router = express.Router();
 const commentController = require('../controllers/commentController');
+const { protect } = require('../middleware/auth');
 
-// GET /api/comments - Get all comments
+const router = express.Router();
+
+// Public routes
 router.get('/', commentController.getAllComments);
-
-// POST /api/comments - Create new comment
-router.post('/', commentController.createComment);
-
-// GET /api/comments/:id - Get comment by ID
 router.get('/:id', commentController.getCommentById);
 
-// PUT /api/comments/:id - Update comment
-router.put('/:id', commentController.updateComment);
+// Protected routes
+router.post('/', protect, commentController.createComment);
+router.put('/:id', protect, commentController.updateComment);
+router.delete('/:id', protect, commentController.deleteComment);
 
-// DELETE /api/comments/:id - Delete comment
-router.delete('/:id', commentController.deleteComment);
-
-// POST /api/comments/:id/likes - Like comment
-router.post('/:id/likes', commentController.likeComment);
-
-// DELETE /api/comments/:id/likes - Unlike comment
-router.delete('/:id/likes', commentController.unlikeComment);
+// Like/unlike comment
+router.post('/:id/like', protect, commentController.toggleCommentLike);
+router.delete('/:id/like', protect, commentController.toggleCommentLike);
 
 module.exports = router;

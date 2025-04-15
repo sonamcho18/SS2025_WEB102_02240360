@@ -1,32 +1,29 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router(); // Move this line to the top
 const videoController = require('../controllers/videoController');
+const { protect } = require('../middleware/auth');
+const { upload } = require('../middleware/upload');
 
-// GET /api/videos - Get all videos
+// Public routes
+
+router.get('/following', protect, videoController.getFollowingVideos);
+
 router.get('/', videoController.getAllVideos);
-
-// POST /api/videos - Create new video
-router.post('/', videoController.createVideo);
-
-// GET /api/videos/:id - Get video by ID
 router.get('/:id', videoController.getVideoById);
-
-// PUT /api/videos/:id - Update video
-router.put('/:id', videoController.updateVideo);
-
-// DELETE /api/videos/:id - Delete video
-router.delete('/:id', videoController.deleteVideo);
-
-// GET /api/videos/:id/comments - Get video comments
 router.get('/:id/comments', videoController.getVideoComments);
 
-// GET /api/videos/:id/likes - Get video likes
-router.get('/:id/likes', videoController.getVideoLikes);
 
-// POST /api/videos/:id/likes - Like video
-router.post('/:id/likes', videoController.likeVideo);
+// Protected routes - note that you're using 'protect' but tried to use 'auth' above
+router.post('/', protect, upload.fields([
+  { name: 'video', maxCount: 1 }, 
+  { name: 'thumbnail', maxCount: 1 }
+]), videoController.createVideo);
 
-// DELETE /api/videos/:id/likes - Unlike video
-router.delete('/:id/likes', videoController.unlikeVideo);
+router.put('/:id', protect, videoController.updateVideo);
+router.delete('/:id', protect, videoController.deleteVideo);
+
+// Like/unlike video
+router.post('/:id/like', protect, videoController.toggleVideoLike);
+router.delete('/:id/like', protect, videoController.toggleVideoLike);
 
 module.exports = router;

@@ -1,32 +1,29 @@
 const express = require('express');
-const router = express.Router();
 const userController = require('../controllers/userController');
+const { protect } = require('../middleware/auth');
+const { upload } = require('../middleware/upload');
 
-// GET /api/users - Get all users
+
+const router = express.Router();
+
+// Public routes
 router.get('/', userController.getAllUsers);
-
-// POST /api/users - Create new user
-router.post('/', userController.createUser);
-
-// GET /api/users/:id - Get user by ID
 router.get('/:id', userController.getUserById);
+router.post('/register', userController.registerUser);
+router.post('/login', userController.loginUser);
 
-// PUT /api/users/:id - Update user
-router.put('/:id', userController.updateUser);
+// Protected routes
+router.put('/:id', protect, userController.updateUser);
+router.delete('/:id', protect, userController.deleteUser);
+router.put('/:id', protect, upload.single('avatar'), userController.updateUser);
 
-// DELETE /api/users/:id - Delete user
-router.delete('/:id', userController.deleteUser);
-
-// GET /api/users/:id/videos - Get user videos
+// User's videos, followers, following
 router.get('/:id/videos', userController.getUserVideos);
-
-// GET /api/users/:id/followers - Get followers
 router.get('/:id/followers', userController.getUserFollowers);
+router.get('/:id/following', userController.getUserFollowing);
 
-// POST /api/users/:id/followers - Follow user
-router.post('/:id/followers', userController.followUser);
-
-// DELETE /api/users/:id/followers - Unfollow user
-router.delete('/:id/followers', userController.unfollowUser);
+// Follow/unfollow
+router.post('/:id/follow', protect, userController.followUser);
+router.delete('/:id/follow', protect, userController.unfollowUser);
 
 module.exports = router;
